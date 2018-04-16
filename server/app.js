@@ -4,8 +4,8 @@ const restApi = require('./routes/index')
 const cors = require('cors')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/todosexercise')
 require('dotenv').config()
+mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@ds153494.mlab.com:53494/todosexercise`)
 
 const app = express()
 
