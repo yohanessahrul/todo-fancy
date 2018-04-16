@@ -1,9 +1,11 @@
 const Task = require('../models/task.model')
 
 module.exports = {
-    
     list: function (req, res) {
-      Task.find(function(err, response){
+      Task.find({
+        user: req.params.id,
+        status: false
+      },function(err, response){
         if(!err) {
           res.status(200).json({
             message: 'Get all data task success !!',
@@ -15,12 +17,14 @@ module.exports = {
           })
         }
       })
+      .populate('users')
     },
 
     createTask: function(req, res) {
       let data = new Task({
         name: req.body.name,
-        status: false
+        status: false,
+        user: req.body.user
       })
 
       data.save(function(err, response) {
@@ -55,8 +59,10 @@ module.exports = {
     },
 
     checkList: function(req, res) {
-      Task.findByIdAndUpdate(req.params.id,
-        { status: true }, 
+      Task.findByIdAndUpdate(req.params.id,{ 
+        status: true,
+        updatedAt: new Date()
+        }, 
         function(err, response) {
           if(!err) {
             res.status(200).json({
@@ -85,6 +91,7 @@ module.exports = {
 
     completeTask: function(req, res) {
       Task.find({
+        user: req.params.id,
         status: true
       }, function(err, response) {
         if(!err){
@@ -98,6 +105,7 @@ module.exports = {
           })
         }
       })
+      .sort('updatedAt')
     },
 
     uncompletetask: function(req, res) {

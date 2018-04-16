@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Component Vue</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div style="display:table; width:100%;" class="row">
+                <h1 style="font-size:80px; font-family: 'Lobster', cursive; text-align:center; ">youdo</h1>
+                <p style="margin-top:-10px; text-align:center;">{{ username }}</p>
+                <p style="background:red; display:table;" v-on:click="logout">Logout</p>
+            </div>
+
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div style="border-radius:10px; width:100%; background:#FAFAFA; padding:20px;" class="col-md-8">
+                        <form>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Input New Task</label>
+                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="newTask" placeholder="Enter task">
+                                <small id="emailHelp" class="form-text text-muted">Add your new task.</small>
+                            </div>
+                            <!-- <input style="width:100%; margin-top:20px;" type="text" name="name" v-model="newTask" placeholder="new todo"> -->
+                            <button class="btn btn-primary" v-on:click.prevent="getFormValues">Simpan</button>
+                        </form>
+                        <!-- <input style="width:100%; margin-top:20px;" type="text" placeholder="new todo.."> -->
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+                
+                <br>
+                <div class="row">
+                    <div class="col-md-2"></div>
+                    <div style="width:100%; min-height:300px; background:red;" class="col-md-4">
+                        <h3>Uncompleted Task :</h3>
+                        <div-task
+                            v-for="task in tasks"
+                            v-bind:key="task._id"
+                            v-bind:id="task._id"
+                            v-bind:name="task.name"
+                            v-bind:status="task.status"
+                        ></div-task>
+                    </div>
+                    <div style="width:100%; min-height:300px; background:yellow;" class="col-md-4">
+                        <h3>Complete Task :</h3>
+                        <div-complete
+                            v-for="completeTask in completeTasks"
+                            v-bind:key="completeTask._id"
+                            v-bind:id="completeTask._id"
+                            v-bind:name="completeTask.name"
+                        ></div-complete>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+            <!-- </div> -->
+        </div>
+        
+        <!-- <p v-on:click="logout">Logout</p>
+        <p>{{ id }}</p>
+        <p>{{ username }}</p>
+        <h1>New Todos</h1> -->
+                <!-- <data-user
+                    v-for="user in users"
+                    v-bind:key="user._id"
+                    v-bind:id="user._id"
+                    v-bind:username="user.username"
+                    v-bind:email="user.email"
+                ></data-user> -->
+            <!-- </tbody>
+        </table> -->
+        <br><br><br>
+
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+</body>
+<script src="./script/script.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                id: localStorage.getItem('id'),
+                username: localStorage.getItem('username'),
+                newTask: '',
+                users: [],
+                tasks: [],
+                completeTasks: [],
+                newTodo: []
+            },
+            beforeCreate: function() {
+                let idx = localStorage.getItem('id')
+                
+                axios.get(`http://localhost:3000/api/task/list/${idx}`)
+                .then(response => {
+                    console.log('Dapet data task')
+                    console.log('#### ',localStorage.getItem('id'))
+                    let taskLIst = response.data.data
+                    taskLIst.forEach(task => {
+                        this.tasks.push(task)
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+                axios.get('http://localhost:3000/api/user/list')
+                .then(response => {
+                    console.log('Dapet data user')
+                    let userList = response.data.data
+                    userList.forEach(user => {
+                        this.users.push(user)
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+                axios.get(`http://localhost:3000/api/task/completetask/${idx}`)
+                .then(response => {
+                    let completeList = response.data.data
+                    completeList.forEach(complete => {
+                        this.completeTasks.push(complete)
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                // this.username = localStorage.getItem('username')
+                // console.log('username ===> ', this.username)
+            },
+            methods: {
+                getFormValues: function() {
+                    console.log(this.newTask)
+                    console.log('masuk getForm')
+                    console.log(localStorage.getItem('id'))
+                    axios.post('http://localhost:3000/api/task/createtask', {
+                        name: this.newTask,
+                        user: localStorage.getItem('id')
+                    })
+                    .then(response => {
+                        this.newTask= ''
+                        this.tasks.push(response.data.data)
+                    })
+                    .catch(err => {
+                        console.log('gagal input dari axios')
+                    })
+                },
+                logout: function() {
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('id')
+                    localStorage.removeItem('username')
+                    location.reload('/')
+                }
+            }
+        })
+    </script>
+    <script>
+        if(!localStorage.getItem('token')) {
+          location.replace('/login.html')
+        }
+    </script>
+</html>

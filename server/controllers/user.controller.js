@@ -18,6 +18,7 @@ module.exports = {
                 })
             }
         })
+        // .populate('task')
     },
     
     create: function (req, res) {
@@ -113,31 +114,32 @@ module.exports = {
     signIn: function (req, res) {
         User.findOne({
             username: req.body.username
-        }, function(err, response) {
-            if(!err) {
-                let comparePassword = bcrypt.compareSync(req.body.password, response.password)
-
-                if(comparePassword == true) {
-                    console.log('compare sync password berhasil')
-
-                    let payload = {
-                        username: response.username,
-                        role: response.role
-                    }
-                    let token = jwt.sign(payload, 'risnauli')
-                    
-                    res.status(200).json({
-                        message: 'Login berhasil dilakukan',
-                        username: response.username,
-                        role: response.role,
-                        token: token
-                    })
+        })
+        .then(response => {
+            let compare = bcrypt.compareSync(req.body.password, response.password)
+            console.log(compare)
+            if(compare){
+                let payload = {
+                    username: response.username,
+                    role: response.role
                 }
+                let token = jwt.sign(payload, 'secretkeys')
+
+                res.status(200).json({
+                    message: 'Password sama, selamat datang',
+                    id: response._id,
+                    username: response.username,
+                    role: response.role,
+                    token: token
+                })
             } else {
-                res.status(500).json({
-                    message: err.message
+                res.status(400).json({
+                    message: 'Password tidak sama, periksa lagi'
                 })
             }
+        })
+        .catch(err => {
+            console.log(err)
         })
     }
 }
