@@ -3,9 +3,9 @@ const bcrypt = require('bcryptjs')
 const salt = bcrypt.genSaltSync(10)
 const jwt = require('jsonwebtoken')
 
-
 module.exports = {
     list: function (req, res) {
+        
         User.find(function(err, response) {
             if(!err) {
                 res.status(200).json({
@@ -117,9 +117,10 @@ module.exports = {
         })
         .then(response => {
             let compare = bcrypt.compareSync(req.body.password, response.password)
-            console.log(compare)
+            console.log('Hasil Compare = ',compare)
             if(compare){
                 let payload = {
+                    id: response._id,
                     username: response.username,
                     role: response.role
                 }
@@ -139,6 +140,9 @@ module.exports = {
             }
         })
         .catch(err => {
+            res.status(500).json({
+                message: err.message
+            })
             console.log(err)
         })
     }

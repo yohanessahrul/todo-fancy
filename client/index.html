@@ -4,80 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Component Vue</title>
+    <title>Todo Fancy</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        element.style {
+            font-size: 50px !important;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Todo Fancy</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Todo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Complete Task</a>
+                </li>
+                <li>
+                    <button class="btn btn-sm btn-danger" v-on:click="logout()">Logout</button>
+                </li>
+            </ul>
+            </div>
+        </nav>
+
         <div class="container">
-            <div style="display:table; width:100%;" class="row">
-                <h1 style="font-size:80px; font-family: 'Lobster', cursive; text-align:center; ">youdo</h1>
-                <p style="margin-top:-10px; text-align:center;">{{ username }}</p>
-                <p style="background:red; display:table;" v-on:click="logout">Logout</p>
+            <div class="row baris1">
+                <div class="col-md-3">
+                    <div class="profile">
+                        <div class="editbutton">
+                            <i class="far fa-edit" data-toggle="modal" data-target="#editProfile"></i>
+                            
+                            <div class="modal fade" id="editProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Input New Task</label>
+                                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="newTask" placeholder="Enter task">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleFormControlTextarea1">Input Description</label>
+                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Description" v-model="description"></textarea>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" v-on:click.prevent="getFormValues()">Save changes</button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="avatarwrap">
+                            <div class="avatar">
+                                <img src=""/>
+                            </div>
+                        </div>
+                        <h1 class="fullname">Yohanes Sahrul</h1>
+                        <h1 class="username">congoranes</h1>
+                        <p>Jakarta | Indonesia</p>
+                    </div>
+                    <div class="addtask" >
+                        <button class="addtask" data-toggle="modal" data-target="#addTaskModal">Add Task</button>
+                    </div>
+
+                    <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add New Task</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1">Input New Task</label>
+                                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="newTask" placeholder="Enter task">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleFormControlTextarea1">Input Description</label>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Description" v-model="newTaskDescription"></textarea>
+                                    </div>
+
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" v-on:click.prevent="getFormValues()">Save changes</button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="col-md-9 rightbar">
+                    <div class="row">
+
+                    </div>
+                    <div class="row">
+                        <div class="task-list">
+                            <ul>
+                                <div-task
+                                    v-for="task in tasks"
+                                    v-bind:key="task._id"
+                                    v-bind:id="task._id"
+                                    v-bind:name="task.name"
+                                    v-bind:description="task.description"
+                                    v-bind:status="task.status"
+                                ></div-task>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-                <div class="row">
-                    <div class="col-md-2"></div>
-                    <div style="border-radius:10px; width:100%; background:#FAFAFA; padding:20px;" class="col-md-8">
-                        <form>
-                            <div class="form-group">
-                                <label for="exampleInputEmail1">Input New Task</label>
-                                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" v-model="newTask" placeholder="Enter task">
-                                <small id="emailHelp" class="form-text text-muted">Add your new task.</small>
-                            </div>
-                            <!-- <input style="width:100%; margin-top:20px;" type="text" name="name" v-model="newTask" placeholder="new todo"> -->
-                            <button class="btn btn-primary" v-on:click.prevent="getFormValues">Simpan</button>
-                        </form>
-                        <!-- <input style="width:100%; margin-top:20px;" type="text" placeholder="new todo.."> -->
-                    </div>
-                    <div class="col-md-2"></div>
-                </div>
-                
-                <br>
-                <div class="row">
-                    <div class="col-md-2"></div>
-                    <div style="width:100%; min-height:300px; background:red;" class="col-md-4">
-                        <h3>Uncompleted Task :</h3>
-                        <div-task
-                            v-for="task in tasks"
-                            v-bind:key="task._id"
-                            v-bind:id="task._id"
-                            v-bind:name="task.name"
-                            v-bind:status="task.status"
-                        ></div-task>
-                    </div>
-                    <div style="width:100%; min-height:300px; background:yellow;" class="col-md-4">
-                        <h3>Complete Task :</h3>
-                        <div-complete
-                            v-for="completeTask in completeTasks"
-                            v-bind:key="completeTask._id"
-                            v-bind:id="completeTask._id"
-                            v-bind:name="completeTask.name"
-                        ></div-complete>
-                    </div>
-                    <div class="col-md-2"></div>
-                </div>
-            <!-- </div> -->
         </div>
-        
-        <!-- <p v-on:click="logout">Logout</p>
-        <p>{{ id }}</p>
-        <p>{{ username }}</p>
-        <h1>New Todos</h1> -->
-                <!-- <data-user
-                    v-for="user in users"
-                    v-bind:key="user._id"
-                    v-bind:id="user._id"
-                    v-bind:username="user.username"
-                    v-bind:email="user.email"
-                ></data-user> -->
-            <!-- </tbody>
-        </table> -->
-        <br><br><br>
 
     </div>
     
@@ -90,43 +160,35 @@
         new Vue({
             el: '#app',
             data: {
-                id: localStorage.getItem('id'),
-                username: localStorage.getItem('username'),
+                id: '123',
+                username: '',
                 newTask: '',
+                newTaskDescription: '',
                 users: [],
                 tasks: [],
                 completeTasks: [],
                 newTodo: []
             },
             beforeCreate: function() {
-                let idx = localStorage.getItem('id')
+                let token = localStorage.getItem('token')
+                console.log('token = ',token)
                 
-                axios.get(`http://localhost:3000/api/task/list/${idx}`)
+                axios.get(`http://localhost:3000/api/task/list/${token}`)
                 .then(response => {
                     console.log('Dapet data task')
-                    console.log('#### ',localStorage.getItem('id'))
+                    this.username = response.data.username
                     let taskLIst = response.data.data
                     taskLIst.forEach(task => {
                         this.tasks.push(task)
                     })
+
+                    console.log('Ini data task = ',response.data.data)
                 })
                 .catch(err => {
                     console.log(err)
                 })
 
-                axios.get('http://localhost:3000/api/user/list')
-                .then(response => {
-                    console.log('Dapet data user')
-                    let userList = response.data.data
-                    userList.forEach(user => {
-                        this.users.push(user)
-                    })
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-
-                axios.get(`http://localhost:3000/api/task/completetask/${idx}`)
+                axios.get(`http://localhost:3000/api/task/completetask/${token}`)
                 .then(response => {
                     let completeList = response.data.data
                     completeList.forEach(complete => {
@@ -136,21 +198,21 @@
                 .catch(err => {
                     console.log(err)
                 })
-                // this.username = localStorage.getItem('username')
-                // console.log('username ===> ', this.username)
+                
             },
             methods: {
                 getFormValues: function() {
-                    console.log(this.newTask)
-                    console.log('masuk getForm')
-                    console.log(localStorage.getItem('id'))
-                    axios.post('http://localhost:3000/api/task/createtask', {
+                    let token = localStorage.getItem('token')
+                    axios.post(`http://localhost:3000/api/task/createtask/${token}`, {
                         name: this.newTask,
-                        user: localStorage.getItem('id')
+                        description: this.newTaskDescription
                     })
                     .then(response => {
+                        let data = response.data.data
                         this.newTask= ''
-                        this.tasks.push(response.data.data)
+                        this.newTaskDescription = ''
+                        this.tasks.push(data)
+                        console.log('Input data success, = ', data)
                     })
                     .catch(err => {
                         console.log('gagal input dari axios')

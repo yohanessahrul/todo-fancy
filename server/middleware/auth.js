@@ -5,8 +5,8 @@ module.exports = {
         let getToken = req.headers.token
         let decoded = jwt.verify(getToken, 'risnauli')
 
-        console.log(decoded.username);
-        console.log(decoded.role);
+        console.log(decoded.username)
+        console.log(decoded.role)
 
         if(decoded.role == 'admin') {
             next()

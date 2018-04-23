@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var schema = new mongoose.Schema({
     name: String,
     status: Boolean,
+    description: String,
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

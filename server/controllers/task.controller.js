@@ -1,14 +1,22 @@
 const Task = require('../models/task.model')
+const jwt = require('jsonwebtoken')
 
 module.exports = {
     list: function (req, res) {
+      let paramsToken = req.params.token
+      let decodeToken = jwt.verify(paramsToken, 'secretkeys')
+      var sendUsername = decodeToken.username
+
       Task.find({
-        user: req.params.id,
+        user: decodeToken.id,
         status: false
-      },function(err, response){
-        if(!err) {
+      })
+      .populate('users') // gak guna
+      .exec(function (err, response) {
+        if(response){
           res.status(200).json({
             message: 'Get all data task success !!',
+            username: sendUsername,
             data: response
           })
         } else {
@@ -17,14 +25,18 @@ module.exports = {
           })
         }
       })
-      .populate('users')
+      
     },
 
     createTask: function(req, res) {
+      let paramsToken = req.params.token
+      let decodeToken = jwt.verify(paramsToken, 'secretkeys')
+
       let data = new Task({
         name: req.body.name,
+        description: req.body.description,
         status: false,
-        user: req.body.user
+        user: decodeToken.id
       })
 
       data.save(function(err, response) {
@@ -42,8 +54,10 @@ module.exports = {
     },
 
     updateTask: function(req, res) {
-      Task.findByIdAndUpdate(req.params.id,
-        { name: req.body.name }, 
+      Task.findByIdAndUpdate(req.params.id,{
+        name: req.body.name,
+        description: req.body.description
+      }, 
         function(err, response) {
           if(!err) {
             res.status(200).json({
@@ -59,6 +73,10 @@ module.exports = {
     },
 
     checkList: function(req, res) {
+      console.log('controller checklist')
+      // let paramsToken = req.params.token
+      // let decodeToken = jwt.verify(paramsToken, 'secretkeys')
+
       Task.findByIdAndUpdate(req.params.id,{ 
         status: true,
         updatedAt: new Date()
@@ -90,8 +108,12 @@ module.exports = {
     },
 
     completeTask: function(req, res) {
+      let paramsToken = req.params.token
+      let decodeToken = jwt.verify(paramsToken, 'secretkeys')
+      
+      // let idUser = jwt.verify(req.params.token, 'risnauli')
       Task.find({
-        user: req.params.id,
+        user: decodeToken.id,
         status: true
       }, function(err, response) {
         if(!err){
